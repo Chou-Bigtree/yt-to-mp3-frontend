@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube 轉 MP3 轉換器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+        }
+        .loader {
+            border-top-color: #3498db;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-xl border border-gray-700">
+        
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-cyan-400">YouTube 影片轉 MP3</h1>
+            <p class="text-gray-400 mt-2">貼上 YouTube 影片網址，即可將音訊轉換為 MP3 檔案。</p>
+        </div>
+
+        <div class="space-y-4">
+            <div class="relative">
+                <i class="fa fa-link absolute top-1/2 left-4 -translate-y-1/2 text-gray-500"></i>
+                <input type="text" id="youtube-url" placeholder="https://www.youtube.com/watch?v=..." class="w-full bg-gray-700 border border-gray-600 rounded-lg py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition duration-300">
+            </div>
+            <button id="convert-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 flex items-center justify-center space-x-2">
+                <i class="fa fa-sync-alt"></i>
+                <span id="btn-text">開始轉換</span>
+            </button>
+        </div>
+
+        <div id="status-area" class="mt-8 text-center min-h-[100px] flex items-center justify-center">
+            <p class="text-gray-500">請貼上網址以開始</p>
+        </div>
+
+    </div>
+
+    <script>
+        const urlInput = document.getElementById('youtube-url');
+        const convertBtn = document.getElementById('convert-btn');
+        const statusArea = document.getElementById('status-area');
+        const btnText = document.getElementById('btn-text');
+
+        // !!! 重要 !!!
+        // 請將這裡的 URL 換成你從 Vercel 拿到的後端網址
+        const BACKEND_API_URL = "https://yt-to-mp3-seven.vercel.app"; // 例如: https://yt-to-mp3-abcd.vercel.app
+
+        convertBtn.addEventListener('click', async () => {
+            const url = urlInput.value.trim();
+            if (!isValidYoutubeUrl(url)) {
+                showError('請輸入有效的 YouTube 影片網址！');
+                return;
+            }
+
+            showLoading();
+            convertBtn.disabled = true;
+            btnText.innerText = '處理中...';
+            
+            try {
+                // 使用 fetch() 將 URL 發送到您的後端伺服器
+                const response = await fetch(`${BACKEND_API_URL}/api/convert`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const downloadUrl = `${BACKEND_API_URL}/download/${data.fileName}`;
+                    showSuccess(downloadUrl, data.fileName);
+                } else {
+                    showError(data.error || '發生未知錯誤');
+                }
+
+            } catch (err) {
+                console.error("Fetch Error:", err);
+                showError('無法連接到後端伺服器，請檢查 API 網址是否正確。');
+            } finally {
+                convertBtn.disabled = false;
+                btnText.innerText = '開始轉換';
+            }
+        });
+
+        function isValidYoutubeUrl(url) {
+            const regex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+            return regex.test(url);
+        }
+
+        function showLoading() {
+            statusArea.innerHTML = `
+                <div class="flex flex-col items-center justify-center">
+                    <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
+                    <p class="font-semibold text-cyan-400">正在與伺服器連線並處理中...</p>
+                    <p class="text-sm text-gray-500 mt-1">這可能需要一點時間，請勿關閉視窗</p>
+                </div>
+            `;
+        }
+
+        function showSuccess(downloadUrl, videoTitle) {
+            statusArea.innerHTML = `
+                <div class="bg-gray-700/50 p-6 rounded-lg w-full text-center border border-green-500/30">
+                    <p class="text-green-400 font-bold text-lg mb-3">轉換成功！</p>
+                    <p class="text-sm text-gray-300 truncate mb-4" title="${videoTitle}"><i class="fa fa-music mr-2"></i>${videoTitle}</p>
+                    <a href="${downloadUrl}" 
+                       target="_blank"
+                       class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 inline-flex items-center justify-center space-x-2">
+                        <i class="fa fa-download"></i>
+                        <span>下載 MP3</span>
+                    </a>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            statusArea.innerHTML = `
+                <div class="bg-red-900/50 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg relative w-full" role="alert">
+                    <strong class="font-bold">錯誤：</strong>
+                    <span class="block sm:inline">${message}</span>
+                </div>
+            `;
+        }
+    </script>
+
+</body>
+</html>
+
+
