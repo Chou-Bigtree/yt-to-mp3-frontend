@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Âà MP3 Âà´«¾¹</title>
+    <title>YouTube è½‰ MP3 è½‰æ›å™¨</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
@@ -24,8 +24,8 @@
     <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-xl border border-gray-700">
         
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-cyan-400">YouTube ¼v¤ùÂà MP3</h1>
-            <p class="text-gray-400 mt-2">¶K¤W YouTube ¼v¤ùºô§}¡A§Y¥i±N­µ°TÂà´«¬° MP3 ÀÉ®×¡C</p>
+            <h1 class="text-3xl font-bold text-cyan-400">YouTube å½±ç‰‡è½‰ MP3</h1>
+            <p class="text-gray-400 mt-2">è²¼ä¸Š YouTube å½±ç‰‡ç¶²å€ï¼Œå³å¯å°‡éŸ³è¨Šè½‰æ›ç‚º MP3 æª”æ¡ˆã€‚</p>
         </div>
 
         <div class="space-y-4">
@@ -35,12 +35,12 @@
             </div>
             <button id="convert-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 flex items-center justify-center space-x-2">
                 <i class="fa fa-sync-alt"></i>
-                <span id="btn-text">¶}©lÂà´«</span>
+                <span id="btn-text">é–‹å§‹è½‰æ›</span>
             </button>
         </div>
 
         <div id="status-area" class="mt-8 text-center min-h-[100px] flex items-center justify-center">
-            <p class="text-gray-500">½Ğ¶K¤Wºô§}¥H¶}©l</p>
+            <p class="text-gray-500">è«‹è²¼ä¸Šç¶²å€ä»¥é–‹å§‹</p>
         </div>
 
     </div>
@@ -51,23 +51,23 @@
         const statusArea = document.getElementById('status-area');
         const btnText = document.getElementById('btn-text');
 
-        // !!! ­«­n !!!
-        // ½Ğ±N³o¸Ìªº URL ´«¦¨§A±q Vercel ®³¨ìªº«áºİºô§}
-        const BACKEND_API_URL = "https://yt-to-mp3-seven.vercel.app"; // ¨Ò¦p: https://yt-to-mp3-abcd.vercel.app
+        // !!! é‡è¦ !!!
+        // è«‹å°‡é€™è£¡çš„ URL æ›æˆä½ å¾ Vercel æ‹¿åˆ°çš„å¾Œç«¯ç¶²å€
+        const BACKEND_API_URL = "https://yt-to-mp3-seven.vercel.app"; // ä¾‹å¦‚: https://yt-to-mp3-abcd.vercel.app
 
         convertBtn.addEventListener('click', async () => {
             const url = urlInput.value.trim();
             if (!isValidYoutubeUrl(url)) {
-                showError('½Ğ¿é¤J¦³®Äªº YouTube ¼v¤ùºô§}¡I');
+                showError('è«‹è¼¸å…¥æœ‰æ•ˆçš„ YouTube å½±ç‰‡ç¶²å€ï¼');
                 return;
             }
 
             showLoading();
             convertBtn.disabled = true;
-            btnText.innerText = '³B²z¤¤...';
+            btnText.innerText = 'è™•ç†ä¸­...';
             
             try {
-                // ¨Ï¥Î fetch() ±N URL µo°e¨ì±zªº«áºİ¦øªA¾¹
+                // ä½¿ç”¨ fetch() å°‡ URL ç™¼é€åˆ°æ‚¨çš„å¾Œç«¯ä¼ºæœå™¨
                 const response = await fetch(`${BACKEND_API_URL}/api/convert`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -80,15 +80,15 @@
                     const downloadUrl = `${BACKEND_API_URL}/download/${data.fileName}`;
                     showSuccess(downloadUrl, data.fileName);
                 } else {
-                    showError(data.error || 'µo¥Í¥¼ª¾¿ù»~');
+                    showError(data.error || 'ç™¼ç”ŸæœªçŸ¥éŒ¯èª¤');
                 }
 
             } catch (err) {
                 console.error("Fetch Error:", err);
-                showError('µLªk³s±µ¨ì«áºİ¦øªA¾¹¡A½ĞÀË¬d API ºô§}¬O§_¥¿½T¡C');
+                showError('ç„¡æ³•é€£æ¥åˆ°å¾Œç«¯ä¼ºæœå™¨ï¼Œè«‹æª¢æŸ¥ API ç¶²å€æ˜¯å¦æ­£ç¢ºã€‚');
             } finally {
                 convertBtn.disabled = false;
-                btnText.innerText = '¶}©lÂà´«';
+                btnText.innerText = 'é–‹å§‹è½‰æ›';
             }
         });
 
@@ -101,8 +101,8 @@
             statusArea.innerHTML = `
                 <div class="flex flex-col items-center justify-center">
                     <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"></div>
-                    <p class="font-semibold text-cyan-400">¥¿¦b»P¦øªA¾¹³s½u¨Ã³B²z¤¤...</p>
-                    <p class="text-sm text-gray-500 mt-1">³o¥i¯à»İ­n¤@ÂI®É¶¡¡A½Ğ¤ÅÃö³¬µøµ¡</p>
+                    <p class="font-semibold text-cyan-400">æ­£åœ¨èˆ‡ä¼ºæœå™¨é€£ç·šä¸¦è™•ç†ä¸­...</p>
+                    <p class="text-sm text-gray-500 mt-1">é€™å¯èƒ½éœ€è¦ä¸€é»æ™‚é–“ï¼Œè«‹å‹¿é—œé–‰è¦–çª—</p>
                 </div>
             `;
         }
@@ -110,13 +110,13 @@
         function showSuccess(downloadUrl, videoTitle) {
             statusArea.innerHTML = `
                 <div class="bg-gray-700/50 p-6 rounded-lg w-full text-center border border-green-500/30">
-                    <p class="text-green-400 font-bold text-lg mb-3">Âà´«¦¨¥\¡I</p>
+                    <p class="text-green-400 font-bold text-lg mb-3">è½‰æ›æˆåŠŸï¼</p>
                     <p class="text-sm text-gray-300 truncate mb-4" title="${videoTitle}"><i class="fa fa-music mr-2"></i>${videoTitle}</p>
                     <a href="${downloadUrl}" 
                        target="_blank"
                        class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 inline-flex items-center justify-center space-x-2">
                         <i class="fa fa-download"></i>
-                        <span>¤U¸ü MP3</span>
+                        <span>ä¸‹è¼‰ MP3</span>
                     </a>
                 </div>
             `;
@@ -125,7 +125,7 @@
         function showError(message) {
             statusArea.innerHTML = `
                 <div class="bg-red-900/50 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg relative w-full" role="alert">
-                    <strong class="font-bold">¿ù»~¡G</strong>
+                    <strong class="font-bold">éŒ¯èª¤ï¼š</strong>
                     <span class="block sm:inline">${message}</span>
                 </div>
             `;
